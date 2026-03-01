@@ -8,8 +8,10 @@ import com.augustogabriel.taskmanager.dto.TaskResponseDTO;
 import com.augustogabriel.taskmanager.dto.TaskUpdateRequestDTO;
 import com.augustogabriel.taskmanager.exception.ResourceNotFoundException;
 import com.augustogabriel.taskmanager.repository.TaskRepository;
+import com.augustogabriel.taskmanager.specification.TaskSpecifications;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -86,5 +88,15 @@ public class TaskService {
         response.setCreatedAt(task.getCreatedAt());
         response.setUpdatedAt(task.getUpdatedAt());
         return response;
+    }
+
+    public Page<TaskResponseDTO> listAll(TaskStatus status, TaskPriority priority, String query, Pageable pageable) {
+        Specification<Task> spec = Specification
+                .where(TaskSpecifications.taskSpecification(status))
+                .and(TaskSpecifications.hasPriority(priority)
+                .and(TaskSpecifications.matchesQuery(query)));
+
+        return taskRepository.findAll(spec, pageable)
+                .map(this::toResponse);
     }
 }
