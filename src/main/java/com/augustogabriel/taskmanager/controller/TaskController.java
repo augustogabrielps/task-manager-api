@@ -4,6 +4,7 @@ import com.augustogabriel.taskmanager.dto.TaskCreateRequestDTO;
 import com.augustogabriel.taskmanager.dto.TaskResponseDTO;
 import com.augustogabriel.taskmanager.dto.TaskUpdateRequestDTO;
 import com.augustogabriel.taskmanager.service.TaskService;
+import jakarta.validation.Valid;
 import jdk.jfr.Description;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +23,7 @@ public class TaskController {
 
     @PostMapping
     @Description("Create a new task")
-    public TaskResponseDTO createTask(@RequestBody TaskCreateRequestDTO taskCreateRequestDTO) {
+    public TaskResponseDTO createTask(@Valid @RequestBody TaskCreateRequestDTO taskCreateRequestDTO) {
         return taskService.create(taskCreateRequestDTO);
     }
 
@@ -41,7 +42,7 @@ public class TaskController {
 
     @PutMapping("/update/{id}")
     @Description("Update an existing task")
-    public TaskResponseDTO getUpdatedTask(@PathVariable UUID id, @RequestBody TaskUpdateRequestDTO taskUpdateRequest) {
+    public TaskResponseDTO getUpdatedTask(@PathVariable UUID id, @Valid @RequestBody TaskUpdateRequestDTO taskUpdateRequest) {
         return taskService.updateTask(id, taskUpdateRequest);
     }
 
