@@ -6,9 +6,12 @@ import com.augustogabriel.taskmanager.dto.TaskUpdateRequestDTO;
 import com.augustogabriel.taskmanager.service.TaskService;
 import jakarta.validation.Valid;
 import jdk.jfr.Description;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -29,8 +32,9 @@ public class TaskController {
 
     @GetMapping
     @Description("Get a list of all tasks")
-    public List<TaskResponseDTO> getAllTasks() {
-        return taskService.listAll();
+
+    public Page<TaskResponseDTO> getAllTasks(@PageableDefault (size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        return taskService.listAll(pageable);
     }
 
     @GetMapping("/{id}")

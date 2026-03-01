@@ -8,10 +8,11 @@ import com.augustogabriel.taskmanager.dto.TaskResponseDTO;
 import com.augustogabriel.taskmanager.dto.TaskUpdateRequestDTO;
 import com.augustogabriel.taskmanager.exception.ResourceNotFoundException;
 import com.augustogabriel.taskmanager.repository.TaskRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -37,11 +38,9 @@ public class TaskService {
         return toResponse(saved);
     }
 
-    public List<TaskResponseDTO> listAll() {
-        return taskRepository.findAll()
-                .stream()
-                .map(this::toResponse)
-                .toList();
+    public Page<TaskResponseDTO> listAll(Pageable pageable) {
+        return taskRepository.findAll(pageable)
+                .map(this::toResponse);
     }
 
     public TaskResponseDTO getTaskById(UUID id) {

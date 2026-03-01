@@ -3,7 +3,6 @@ package com.augustogabriel.taskmanager.domain;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.lang.reflect.Modifier;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.UUID;
