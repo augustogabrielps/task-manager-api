@@ -40,10 +40,10 @@ public class TaskService {
         return toResponse(saved);
     }
 
-    public Page<TaskResponseDTO> listAll(Pageable pageable) {
-        return taskRepository.findAll(pageable)
-                .map(this::toResponse);
-    }
+//    public Page<TaskResponseDTO> listAll(Pageable pageable) {
+//        return taskRepository.findAll(pageable)
+//                .map(this::toResponse);
+//    }
 
     public TaskResponseDTO getTaskById(UUID id) {
         return taskRepository.findById(id)
@@ -62,7 +62,7 @@ public class TaskService {
         if (taskUpdateRequestDTO.getPriority() != null)
             task.setPriority(TaskPriority.valueOf(taskUpdateRequestDTO.getPriority()));
         if (taskUpdateRequestDTO.getDueDate() != null)
-            task.setDueDate(LocalDate.parse(taskUpdateRequestDTO.getDueDate()));
+            task.setDueDate(taskUpdateRequestDTO.getDueDate());
 
         Task updated = taskRepository.save(task);
         return toResponse(updated);
@@ -92,11 +92,10 @@ public class TaskService {
 
     public Page<TaskResponseDTO> listAll(TaskStatus status, TaskPriority priority, String query, Pageable pageable) {
         Specification<Task> spec = Specification
-                .where(TaskSpecifications.taskSpecification(status))
-                .and(TaskSpecifications.hasPriority(priority)
+                .where(TaskSpecifications.taskSpecification(status)
+                .and(TaskSpecifications.hasPriority(priority))
                 .and(TaskSpecifications.matchesQuery(query)));
 
-        return taskRepository.findAll(spec, pageable)
-                .map(this::toResponse);
+        return taskRepository.findAll(spec, pageable).map(this::toResponse);
     }
 }

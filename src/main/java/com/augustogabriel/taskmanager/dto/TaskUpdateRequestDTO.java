@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+import java.time.LocalDate;
+
 @Data
 public class TaskUpdateRequestDTO {
 
@@ -17,5 +19,5 @@ public class TaskUpdateRequestDTO {
     private String priority;
 
     @FutureOrPresent(message = "dueDate must be today or in the future")
-    private String dueDate;
+    private LocalDate dueDate;
 }

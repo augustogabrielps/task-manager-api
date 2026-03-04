@@ -1,5 +1,7 @@
 package com.augustogabriel.taskmanager.controller;
 
+import com.augustogabriel.taskmanager.domain.TaskPriority;
+import com.augustogabriel.taskmanager.domain.TaskStatus;
 import com.augustogabriel.taskmanager.dto.TaskCreateRequestDTO;
 import com.augustogabriel.taskmanager.dto.TaskResponseDTO;
 import com.augustogabriel.taskmanager.dto.TaskUpdateRequestDTO;
@@ -32,9 +34,13 @@ public class TaskController {
 
     @GetMapping
     @Description("Get a list of all tasks")
-
-    public Page<TaskResponseDTO> getAllTasks(@PageableDefault (size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        return taskService.listAll(pageable);
+    public Page<TaskResponseDTO> getAllTasks(
+            @RequestParam(required = false) TaskStatus status,
+            @RequestParam(required = false) TaskPriority priority,
+            @RequestParam(required = false, name = "q") String query,
+            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable
+    ) {
+        return taskService.listAll(status, priority, query, pageable);
     }
 
     @GetMapping("/{id}")
