@@ -3,6 +3,7 @@ package com.augustogabriel.taskmanager.dto;
 import com.augustogabriel.taskmanager.domain.TaskPriority;
 import com.augustogabriel.taskmanager.domain.TaskStatus;
 import lombok.Data;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.Instant;
 import java.time.LocalDate;

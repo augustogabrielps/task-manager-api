@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.time.LocalDate;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 @Data
 public class TaskUpdateRequestDTO {
