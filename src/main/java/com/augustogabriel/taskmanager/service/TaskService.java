@@ -58,9 +58,9 @@ public class TaskService {
         if (taskUpdateRequestDTO.getName() != null) task.setName(taskUpdateRequestDTO.getName());
         if (taskUpdateRequestDTO.getDescription() != null) task.setDescription(taskUpdateRequestDTO.getDescription());
         if (taskUpdateRequestDTO.getStatus() != null)
-            task.setStatus(TaskStatus.valueOf(taskUpdateRequestDTO.getStatus()));
+            task.setStatus(taskUpdateRequestDTO.getStatus());
         if (taskUpdateRequestDTO.getPriority() != null)
-            task.setPriority(TaskPriority.valueOf(taskUpdateRequestDTO.getPriority()));
+            task.setPriority(taskUpdateRequestDTO.getPriority());
         if (taskUpdateRequestDTO.getDueDate() != null)
             task.setDueDate(taskUpdateRequestDTO.getDueDate());
 

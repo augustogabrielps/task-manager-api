@@ -6,12 +6,15 @@ import com.augustogabriel.taskmanager.dto.TaskCreateRequestDTO;
 import com.augustogabriel.taskmanager.dto.TaskResponseDTO;
 import com.augustogabriel.taskmanager.dto.TaskUpdateRequestDTO;
 import com.augustogabriel.taskmanager.service.TaskService;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.Parameter;
 
@@ -28,7 +31,12 @@ public class TaskController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create a new task", description = "Creates a new task in the system.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode =  "201", description = "Task created successfully"),
+        @ApiResponse(responseCode = "400", description = "Invalid input data")
+    })
     public TaskResponseDTO createTask(@Valid @RequestBody TaskCreateRequestDTO taskCreateRequestDTO) {
         return taskService.create(taskCreateRequestDTO);
     }
@@ -50,6 +58,10 @@ public class TaskController {
 
     @GetMapping("/{id}")
     @Operation(summary = "Get a task by ID", description = "Retrieves a task by its unique identifier.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Task found"),
+            @ApiResponse(responseCode = "404", description = "Task not found")
+    })
     public TaskResponseDTO getTaskById(@PathVariable UUID id) {
         return taskService.getTaskById(id);
     }
@@ -63,6 +75,10 @@ public class TaskController {
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete a task by ID", description = "Deletes an existing task identified by its unique identifier.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Task successfully deleted"),
+            @ApiResponse(responseCode = "404", description = "Task not found")
+    })
     public void deleteTask(@PathVariable UUID id) {
         taskService.deleteTask(id);
     }

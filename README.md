@@ -115,6 +115,11 @@ taskmanager/
 
 ---
 
+## 📂 Swagger Docmentation
+Run in your browser:
+
+http://localhost:8080/swagger-ui/index.html
+
 ## 🧠 Learning Goals
 
 This project was created to:
