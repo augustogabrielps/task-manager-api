@@ -14,7 +14,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.UUID;
 
 @Service
@@ -39,11 +38,6 @@ public class TaskService {
         Task saved = taskRepository.save(task);
         return toResponse(saved);
     }
-
-//    public Page<TaskResponseDTO> listAll(Pageable pageable) {
-//        return taskRepository.findAll(pageable)
-//                .map(this::toResponse);
-//    }
 
     public TaskResponseDTO getTaskById(UUID id) {
         return taskRepository.findById(id)
