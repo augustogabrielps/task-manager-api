@@ -43,6 +43,9 @@ public class TaskController {
 
     @GetMapping
     @Operation(summary = "List tasks", description = "Retrieves a paginated list of tasks with optional filters for status, priority and search query.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Tasks retrieved successfully")
+    })
     public Page<TaskResponseDTO> getAllTasks(
             @Parameter(description = "Filter tasks by status", example = "TODO")
             @RequestParam(required = false) TaskStatus status,
@@ -69,6 +72,11 @@ public class TaskController {
 
     @PutMapping("/{id}")
     @Operation(summary = "Update a task by ID", description = "Updates the details of an existing task identified by its unique identifier.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200" , description = "Task updated successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid input data"),
+            @ApiResponse(responseCode = "404", description = "Task not found")
+    })
     public TaskResponseDTO getUpdatedTask(@PathVariable UUID id, @Valid @RequestBody TaskUpdateRequestDTO taskUpdateRequest) {
         return taskService.updateTask(id, taskUpdateRequest);
     }
