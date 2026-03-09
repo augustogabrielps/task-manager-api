@@ -8,64 +8,70 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.Instant;
+import java.util.List;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ApiError> handleResourceNotFound(
+    public ResponseEntity<ApiErrorResponse> handleResourceNotFound(
             ResourceNotFoundException exception,
             HttpServletRequest request
     ) {
         HttpStatus status = HttpStatus.NOT_FOUND;
 
-        ApiError body = new ApiError(
-                Instant.now(),
-                status.value(),
-                status.getReasonPhrase(),
-                exception.getMessage(),
-                request.getRequestURI()
-        );
-
-        return ResponseEntity.status(status).body(body);
-    }
-
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ApiError> handleGenericException(
-            Exception ex,
-            HttpServletRequest request
-    ) {
-        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
-
-        ApiError body = new ApiError(
-                Instant.now(),
-                status.value(),
-                status.getReasonPhrase(),
-                "Unexpected error. Please try again later.",
-                request.getRequestURI()
-        );
+        ApiErrorResponse body = ApiErrorResponse.builder()
+                .timestamp(Instant.now())
+                .status(status.value())
+                .error("Resource Not Found")
+                .message(exception.getMessage())
+                .path(request.getRequestURI())
+                .fieldErrors(null)
+                .build();
 
         return ResponseEntity.status(status).body(body);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiError> handleValidation(MethodArgumentNotValidException ex, HttpServletRequest request) {
+    public ResponseEntity<ApiErrorResponse> handleValidation(
+            MethodArgumentNotValidException ex,
+            HttpServletRequest request
+    ) {
         HttpStatus status = HttpStatus.BAD_REQUEST;
 
-        String message = ex.getBindingResult()
+        List<FieldValidationError> fieldErrors = ex.getBindingResult()
                 .getFieldErrors()
                 .stream()
-                .map(err -> err.getField() + ": " + err.getDefaultMessage())
-                .findFirst()
-                .orElse("Validation error");
+                .map(err -> new FieldValidationError(err.getField(), err.getDefaultMessage()))
+                .toList();
 
-        ApiError body = new ApiError(
-                Instant.now(),
-                status.value(),
-                status.getReasonPhrase(),
-                message,
-                request.getRequestURI()
-        );
+        ApiErrorResponse body = ApiErrorResponse.builder()
+                .timestamp(Instant.now())
+                .status(status.value())
+                .error("Validation Error")
+                .message("Request validation failed")
+                .path(request.getRequestURI())
+                .fieldErrors(fieldErrors)
+                .build();
+
+        return ResponseEntity.status(status).body(body);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiErrorResponse> handleGenericException(
+            Exception exception,
+            HttpServletRequest request
+    ) {
+        HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
+
+        ApiErrorResponse body = ApiErrorResponse.builder()
+                .timestamp(Instant.now())
+                .status(status.value())
+                .error("Internal Server Error")
+                .message("Unexpected error. Please try again later.")
+                .path(request.getRequestURI())
+                .fieldErrors(null)
+                .build();
 
         return ResponseEntity.status(status).body(body);
     }
