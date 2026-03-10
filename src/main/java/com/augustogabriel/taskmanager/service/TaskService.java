@@ -1,95 +1,95 @@
-package com.augustogabriel.taskmanager.service;
+    package com.augustogabriel.taskmanager.service;
 
-import com.augustogabriel.taskmanager.domain.Task;
-import com.augustogabriel.taskmanager.domain.TaskPriority;
-import com.augustogabriel.taskmanager.domain.TaskStatus;
-import com.augustogabriel.taskmanager.dto.TaskCreateRequestDTO;
-import com.augustogabriel.taskmanager.dto.TaskResponseDTO;
-import com.augustogabriel.taskmanager.dto.TaskUpdateRequestDTO;
-import com.augustogabriel.taskmanager.exception.ResourceNotFoundException;
-import com.augustogabriel.taskmanager.repository.TaskRepository;
-import com.augustogabriel.taskmanager.specification.TaskSpecifications;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
-import org.springframework.stereotype.Service;
+    import com.augustogabriel.taskmanager.domain.Task;
+    import com.augustogabriel.taskmanager.domain.TaskPriority;
+    import com.augustogabriel.taskmanager.domain.TaskStatus;
+    import com.augustogabriel.taskmanager.dto.TaskCreateRequestDTO;
+    import com.augustogabriel.taskmanager.dto.TaskResponseDTO;
+    import com.augustogabriel.taskmanager.dto.TaskUpdateRequestDTO;
+    import com.augustogabriel.taskmanager.exception.ResourceNotFoundException;
+    import com.augustogabriel.taskmanager.repository.TaskRepository;
+    import com.augustogabriel.taskmanager.specification.TaskSpecifications;
+    import org.springframework.data.domain.Page;
+    import org.springframework.data.domain.Pageable;
+    import org.springframework.data.jpa.domain.Specification;
+    import org.springframework.stereotype.Service;
 
-import java.util.UUID;
+    import java.util.UUID;
 
-@Service
-public class TaskService {
+    @Service
+    public class TaskService {
 
-    private final TaskRepository taskRepository;
-    private final String DELETED_TASK = "Task deleted with id: ";
+        private final TaskRepository taskRepository;
+        private final String DELETED_TASK = "Task deleted with id: ";
 
-    public TaskService(TaskRepository taskRepository) {
-        this.taskRepository = taskRepository;
-    }
+        public TaskService(TaskRepository taskRepository) {
+            this.taskRepository = taskRepository;
+        }
 
-    public TaskResponseDTO create(TaskCreateRequestDTO taskCreateRequestDTO) {
-        Task task = new Task();
-        task.setName(taskCreateRequestDTO.getName());
-        task.setDescription(taskCreateRequestDTO.getDescription());
-        task.setDueDate(taskCreateRequestDTO.getDueDate());
+        public TaskResponseDTO create(TaskCreateRequestDTO taskCreateRequestDTO) {
+            Task task = new Task();
+            task.setName(taskCreateRequestDTO.getName());
+            task.setDescription(taskCreateRequestDTO.getDescription());
+            task.setDueDate(taskCreateRequestDTO.getDueDate());
 
-        TaskPriority priority = taskCreateRequestDTO.getPriority() != null ? taskCreateRequestDTO.getPriority() : TaskPriority.MEDIUM;
-        task.setPriority(priority);
+            TaskPriority priority = taskCreateRequestDTO.getPriority() != null ? taskCreateRequestDTO.getPriority() : TaskPriority.MEDIUM;
+            task.setPriority(priority);
 
-        Task saved = taskRepository.save(task);
-        return toResponse(saved);
-    }
+            Task saved = taskRepository.save(task);
+            return toResponse(saved);
+        }
 
-    public TaskResponseDTO getTaskById(UUID id) {
-        return taskRepository.findById(id)
-                .map(this::toResponse)
-                .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + id));
-    }
+        public TaskResponseDTO getTaskById(UUID id) {
+            return taskRepository.findById(id)
+                    .map(this::toResponse)
+                    .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + id));
+        }
 
-    public TaskResponseDTO updateTask(UUID id, TaskUpdateRequestDTO taskUpdateRequestDTO) {
-        Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + id));
+        public TaskResponseDTO updateTask(UUID id, TaskUpdateRequestDTO taskUpdateRequestDTO) {
+            Task task = taskRepository.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + id));
 
-        if (taskUpdateRequestDTO.getName() != null) task.setName(taskUpdateRequestDTO.getName());
-        if (taskUpdateRequestDTO.getDescription() != null) task.setDescription(taskUpdateRequestDTO.getDescription());
-        if (taskUpdateRequestDTO.getStatus() != null)
-            task.setStatus(taskUpdateRequestDTO.getStatus());
-        if (taskUpdateRequestDTO.getPriority() != null)
-            task.setPriority(taskUpdateRequestDTO.getPriority());
-        if (taskUpdateRequestDTO.getDueDate() != null)
-            task.setDueDate(taskUpdateRequestDTO.getDueDate());
+            if (taskUpdateRequestDTO.getName() != null) task.setName(taskUpdateRequestDTO.getName());
+            if (taskUpdateRequestDTO.getDescription() != null) task.setDescription(taskUpdateRequestDTO.getDescription());
+            if (taskUpdateRequestDTO.getStatus() != null)
+                task.setStatus(taskUpdateRequestDTO.getStatus());
+            if (taskUpdateRequestDTO.getPriority() != null)
+                task.setPriority(taskUpdateRequestDTO.getPriority());
+            if (taskUpdateRequestDTO.getDueDate() != null)
+                task.setDueDate(taskUpdateRequestDTO.getDueDate());
 
-        Task updated = taskRepository.save(task);
-        return toResponse(updated);
-    }
+            Task updated = taskRepository.save(task);
+            return toResponse(updated);
+        }
 
-    public void deleteTask (UUID id) {
-        Task task = taskRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + id));
-        taskRepository.delete(task);
-        if(!taskRepository.existsById(id)){
-            System.out.println(DELETED_TASK + id);
+        public void deleteTask (UUID id) {
+            Task task = taskRepository.findById(id)
+                    .orElseThrow(() -> new ResourceNotFoundException("Task not found with id: " + id));
+            taskRepository.delete(task);
+            if(!taskRepository.existsById(id)){
+                System.out.println(DELETED_TASK + id);
+            }
+        }
+
+        private TaskResponseDTO toResponse(Task task){
+            TaskResponseDTO response = new TaskResponseDTO();
+            response.setId(task.getId());
+            response.setName(task.getName());
+            response.setDescription(task.getDescription());
+            response.setStatus(task.getStatus());
+            response.setPriority(task.getPriority());
+            response.setDueDate(task.getDueDate());
+            response.setCreatedAt(task.getCreatedAt());
+            response.setUpdatedAt(task.getUpdatedAt());
+            return response;
+        }
+
+        public Page<TaskResponseDTO> listAll(TaskStatus status, TaskPriority priority, String query, Pageable pageable) {
+            Specification<Task> spec = Specification
+                    .where(TaskSpecifications.taskSpecification(status)
+                    .and(TaskSpecifications.hasPriority(priority))
+                    .and(TaskSpecifications.matchesQuery(query)));
+
+            return taskRepository.findAll(spec, pageable).map(this::toResponse);
         }
     }
-
-    private TaskResponseDTO toResponse(Task task){
-        TaskResponseDTO response = new TaskResponseDTO();
-        response.setId(task.getId());
-        response.setName(task.getName());
-        response.setDescription(task.getDescription());
-        response.setStatus(task.getStatus());
-        response.setPriority(task.getPriority());
-        response.setDueDate(task.getDueDate());
-        response.setCreatedAt(task.getCreatedAt());
-        response.setUpdatedAt(task.getUpdatedAt());
-        return response;
-    }
-
-    public Page<TaskResponseDTO> listAll(TaskStatus status, TaskPriority priority, String query, Pageable pageable) {
-        Specification<Task> spec = Specification
-                .where(TaskSpecifications.taskSpecification(status)
-                .and(TaskSpecifications.hasPriority(priority))
-                .and(TaskSpecifications.matchesQuery(query)));
-
-        return taskRepository.findAll(spec, pageable).map(this::toResponse);
-    }
-}
