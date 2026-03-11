@@ -170,6 +170,6 @@ class TaskControllerTest {
         doNothing().when(taskService).deleteTask(id);
 
         mockMvc.perform(delete("/tasks/{id}", id))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
     }
 }

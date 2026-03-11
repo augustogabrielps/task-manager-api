@@ -15,9 +15,15 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -161,5 +167,31 @@ class TaskServiceTest {
 
         assertEquals("Task not found with id: " + taskId, exception.getMessage());
         verify(taskRepository, never()).delete(any(Task.class));
+    }
+
+    @Test
+    void listAll_shouldReturnPaginatedTasks() {
+
+        Pageable pageable = PageRequest.of(0, 10);
+
+        Task task = new Task();
+        task.setId(UUID.randomUUID());
+        task.setName("Test task");
+        task.setDescription("Test description");
+        task.setStatus(TaskStatus.TODO);
+        task.setPriority(TaskPriority.HIGH);
+
+        Page<Task> page = new PageImpl<>(List.of(task));
+
+        when(taskRepository.findAll(any(Specification.class), eq(pageable)))
+                .thenReturn(page);
+
+        Page<TaskResponseDTO> result =
+                taskService.listAll(null, null, null, pageable);
+
+        assertEquals(1, result.getTotalElements());
+        assertEquals("Test task", result.getContent().get(0).getName());
+
+        verify(taskRepository).findAll(any(Specification.class), eq(pageable));
     }
 }
