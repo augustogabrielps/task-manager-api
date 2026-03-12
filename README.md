@@ -1,143 +1,163 @@
 # Task Manager API
 
-A simple REST API built with Spring Boot and PostgreSQL to manage tasks.
+A RESTful API built with **Spring Boot and PostgreSQL** to manage tasks with filtering, pagination and validation.
 
-This project is part of my backend development journey using:
-
-- Java 21
-- Spring Boot 4
-- PostgreSQL 15
-- Docker & Docker Compose
-- Maven
+This project was created as part of my backend development journey and demonstrates common patterns used in professional Java backend applications.
 
 ---
 
-## 📦 Tech Stack
+# 📦 Tech Stack
 
 - **Java 21**
 - **Spring Boot**
 - **Spring Data JPA (Hibernate)**
-- **PostgreSQL**
+- **PostgreSQL 15**
 - **Docker**
-- **Docker Compose**
+- **Maven**
+- **Swagger / OpenAPI**
+- **JUnit & Mockito**
 
 ---
 
-## 🏗️ Architecture Overview
+# ✨ Features
 
-The application runs locally using:
+The API supports full task management including:
 
-- A PostgreSQL container managed by Docker Compose
-- Spring Boot running on port `8080`
-- Database exposed on port `5433`
+- Create tasks
+- Retrieve tasks
+- Update tasks
+- Delete tasks
+- Filter tasks
+- Pagination
+- Sorting
 
-Spring Boot connects to PostgreSQL using environment variables for security.
+Additional backend features implemented:
+
+- DTO pattern
+- Global exception handling
+- Input validation
+- API documentation with Swagger
+- Unit tests for controller and service layers
 
 ---
 
-## 🔐 Environment Variables
+# 🌐 API Endpoints
 
-This project uses environment variables instead of hardcoded credentials.
+Base URL: http://localhost:8080/
 
-Create a `.env` file in the root of the project:
 
+| Method | Endpoint | Description |
+|------|------|------|
+| POST | `/tasks` | Create a new task |
+| GET | `/tasks` | List tasks with filters and pagination |
+| GET | `/tasks/{id}` | Get a task by id |
+| PUT | `/tasks/{id}` | Update a task |
+| DELETE | `/tasks/{id}` | Delete a task |
+
+```
+Example request: GET /tasks?status=TODO&priority=HIGH&q=spring&page=0&size=5&sort=createdAt,desc
+```
+
+---
+
+# 📑 Swagger Documentation
+
+Interactive API documentation is available at:
+```
+http://localhost:8080/swagger-ui/index.html
+```
+
+Swagger allows testing endpoints directly from the browser.
+
+---
+
+# 🚀 Running the Project
+
+## 1️⃣ Configure environment variables
+
+Create a `.env` file in the root directory:
+
+```bash
 DB_URL=jdbc:postgresql://localhost:5433/taskdb
 DB_USER=taskuser
 DB_PASSWORD=taskpass
+```
 
 
-⚠️ The `.env` file is ignored by Git for security reasons.
+The `.env` file is ignored by Git.
 
 ---
 
-## 🐳 Running with Docker
+## 2️⃣ Start PostgreSQL container
 
-Start PostgreSQL container:
-
+```bash
 docker compose up -d
+```
 
-
-Check if container is running:
-
-docker ps
-
+Verify container:
+```bash
+docker ps   
+```
 
 You should see:
-
+```bash
 postgres:15
+```
 
 
 ---
 
-## 🚀 Running the Application
-
-Load environment variables:
-
-set -a
-source .env
-set +a
-
-
-Start Spring Boot:
-
+## 3️⃣ Run the application
+```bash
 ./mvnw spring-boot:run
+```
 
 
-Application will run at:
-
-http://localhost:8080
-
-
----
-
-## 🛠 Database Connection Details
-
-- Host: localhost
-- Port: 5433
-- Database: taskdb
-- User: taskuser
-
-You can connect using DBeaver or any PostgreSQL client.
+Application will be available at:
+```aiignore
+http://localhost:8080/
+```
 
 ---
+# 🧪 Running Tests
 
-## 📂 Project Structure
+Run all tests with:
+```bash
+mvn test
+```
 
-taskmanager/
-├── src/
-│ ├── main/
-│ └── test/
-├── docker-compose.yml
-├── pom.xml
-├── .env (ignored)
-└── README.md
+The project includes:
 
+- Controller tests
+- Service unit tests
+- Mockito-based repository mocking
+---
+# 📂 Project Structure
+```markdown
+taskmanager
+├── controller
+├── service
+├── repository
+├── domain
+├── dto
+├── specification
+├── exception
+└── test
+```
+
+Architecture follows the layered pattern:
+```markdown
+Controller → Service → Repository → Database
+```
 
 ---
+# 🔮 Future Improvements
 
-## 📂 Swagger Docmentation
-Run in your browser:
+Possible future extensions:
 
-http://localhost:8080/swagger-ui/index.html
-
-## 🧠 Learning Goals
-
-This project was created to:
-
-- Understand containerized databases
-- Learn environment variable configuration
-- Practice clean backend structure
-- Prepare for production-ready setups
-
----
-
-## 📈 Future Improvements
-
-- Add Task entity and CRUD endpoints
-- Implement DTO pattern
-- Add validation
-- Add Swagger documentation
-- Add authentication (JWT)
-- Deploy to cloud
+- Authentication with JWT
+- User ownership of tasks
+- Task categories
+- CI/CD pipeline
 
 ---
