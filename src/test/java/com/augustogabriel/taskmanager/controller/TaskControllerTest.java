@@ -67,7 +67,7 @@ class TaskControllerTest {
                   "name": "Study Spring Boot",
                   "description": "Finish controller tests",
                   "priority": "HIGH",
-                  "dueDate": "2026-03-20"
+                  "dueDate": "2045-03-20"
                 }
                 """;
 
