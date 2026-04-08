@@ -16,13 +16,9 @@ public class WebConfig {
             public void addCorsMappings(CorsRegistry registry) {
 
                 registry.addMapping("/**")
-                        .allowedOrigins(
-                                "http://localhost:5173",
-                                "https://task-manager-ui-seven-henna.vercel.app"
-                        )
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
-                        .allowedHeaders("*")
-                        .allowCredentials(true); // 🔥 ESSENCIAL
+                        .allowedOriginPatterns("*")
+                        .allowedMethods("*")
+                        .allowedHeaders("*");
             }
         };
     }
